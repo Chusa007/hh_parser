@@ -5,12 +5,14 @@
     author: Шамхалов Р.М.
 """
 
-import requests
 import json
-import itertools
-from datetime import timedelta, date, datetime
 import time
+import requests
+import itertools
+from datetime import timedelta, datetime
+
 import filter
+import db_helper
 from base import WorkPool
 
 
@@ -125,9 +127,8 @@ class Hh(WorkPool):
                     # Дальше надо запарсить данные под формат вставки в БД
                     parse_vacancies_info = Hh.parse_vacancies(vacancies_info, empl)
                     # Запись в базу
-                    print(parse_vacancies_info)
+                    db_helper.upsert_many(parse_vacancies_info)
             date_start = current_date_end
-        print("задание начал")
 
 
 # print(Hh.get_dict_info())
