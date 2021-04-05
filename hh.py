@@ -37,7 +37,7 @@ class Hh(WorkPool):
         return False
 
     @staticmethod
-    def get_vacancies(query_filter: str):
+    def get_vacancies(query_filter: dict):
         """
         Метод для получения вакансии по переданному фильтру
         :param query_filter: фильтр для получения вакансий
@@ -76,36 +76,35 @@ class Hh(WorkPool):
         (Соберет все необходимые фильтры, заберет 2000 с каждого фильтра и положит в БД)
         :return:
         """
+        date_start = datetime.strptime(filter.DATE_FROM, "%Y-%m-%d").date()
+        date_end = datetime.strptime(filter.DATE_TO, "%Y-%m-%d").date()
+        delta = timedelta(days=3)
+
+        # Основной цикл по дате
+        while date_start <= date_end:
+            current_date_end = date_start + delta
+            # Собираем все возможные зарплатные сетки + типы занятости + субъекты
+            for sal, area, empl in itertools.product(filter.SALARY, filter.AREA, filter.EMPLOYMENT):
+                # Пагинация
+                for page_number in range(0, Hh.max_page):
+                    current_filter = {"salary": sal,
+                                      "employment": empl,
+                                      "area": area,
+                                      "date_from": date_start.strftime("%Y-%m-%d"),
+                                      "date_to": current_date_end.strftime("%Y-%m-%d"),
+                                      "per_page": filter.PER_PAGE,
+                                      "page": page_number,
+                                      "only_with_salary": True}
+                    # Получаем информацию по заданному фильтру
+                    # vacancies_info = Hh.get_vacancies(current_filter)
+                    # Дальше надо запарсить данные под формат вставки в БД
+                    # Запись в базу
+            date_start = current_date_end
         print("задание начал")
 
 
 # print(Hh.get_dict_info())
 # print(Hh.check_token())
-#qilter = {"salary": 20000, "per_page": 10, "page": 1, "only_with_salary": True}
-#Hh.get_vacancies(qilter)
-
-
-date_start = datetime.strptime(filter.DATE_FROM, "%Y-%m-%d").date()
-date_end = datetime.strptime(filter.DATE_TO, "%Y-%m-%d").date()
-delta = timedelta(days=3)
-a = []
-
-while date_start <= date_end:
-    current_date_end = date_start + delta
-    for sal, area, empl in itertools.product(filter.SALARY, filter.AREA, filter.EMPLOYMENT):
-        current_filter = {"salary": sal,
-                          "employment": empl,
-                          "area": area,
-                          "date_from": date_start.strftime("%Y-%m-%d"),
-                          "date_to": current_date_end.strftime("%Y-%m-%d"),
-                          "per_page": filter.PER_PAGE,
-                          "page": filter.PAGE,
-                          "only_with_salary": True}
-        print(current_filter)
-    break
-    # print(date_start.strftime("%Y-%m-%d"))
-    date_start = current_date_end
-#
-# print(len(a))
+# filter = {"salary": 20000, "per_page": 10, "page": 1, "only_with_salary": True}
+# Hh.get_vacancies(filter)
 # Hh.get_vacancies('salary=20000&per_page=100&page=19&only_with_salary=true')
-
