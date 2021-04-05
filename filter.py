@@ -21,10 +21,10 @@ ONLY_WITH_SALARY = True
 AREA = [2, 145]
 
 # Дата начала сбора вакансий
-DATE_FROM = '2019-01-01'
+DATE_FROM = '2021-03-03'
 
 # Дата начала сбора вакансий
-DATE_TO = '2020-05-01'
+DATE_TO = '2021-05-01'
 
 # Тип занятости
 EMPLOYMENT = ['part', 'project']
